@@ -1,4 +1,4 @@
-[gd_scene load_steps=120 format=2]
+[gd_scene load_steps=121 format=2]
 
 [ext_resource path="res://src/Actors/Player/x_sprites/x.res" type="SpriteFrames" id=1]
 [ext_resource path="res://X_mod/UltimateX/Player/UltimateX.gd" type="Script" id=2]
@@ -144,6 +144,9 @@ animations = [ {
 "name": "sparks",
 "speed": 32.0
 } ]
+
+[sub_resource type="RectangleShape2D" id=45]
+extents = Vector2( 63.5, 38 )
 
 [sub_resource type="CanvasItemMaterial" id=31]
 particles_animation = true
@@ -680,9 +683,14 @@ bus = "SFX"
 
 [node name="strike_effect" type="AnimatedSprite" parent="NovaStrike"]
 visible = false
-position = Vector2( -48, -8 )
+position = Vector2( -38, -8 )
+scale = Vector2( 1.5, 1.5 )
 z_index = 4
 frames = ExtResource( 124 )
+
+[node name="HitboxShape" type="CollisionShape2D" parent="NovaStrike"]
+position = Vector2( -4.5, -8 )
+shape = SubResource( 45 )
 
 [node name="Shoryuuken" type="Node2D" parent="."]
 script = ExtResource( 54 )

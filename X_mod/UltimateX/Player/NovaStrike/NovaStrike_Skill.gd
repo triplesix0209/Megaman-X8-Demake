@@ -7,10 +7,11 @@ export  var upgraded: bool = true
 onready var animatedSprite: = character.get_node("animatedSprite")
 onready var sfx: = $sfx
 onready var strike_effect: AnimatedSprite = $strike_effect
+onready var hitbox_shape_node: CollisionShape2D = $HitboxShape
+onready var effect_home: Vector2 = $strike_effect.position
 
-const strike_effect_base_offset: = Vector2(-48, -8)
 const strike_effect_tail_compensation: = [0.0, -20.5, -21.0]
-const strike_effect_scale: = Vector2(1.5, 1.5)
+const strike_effect_reference_scale: = 1.5
 
 var current_hitbox: Object = null
 var hitbox_upleft: Vector2 = Vector2(0, 0)
@@ -93,8 +94,8 @@ func hitbox_and_position() -> void :
 	hitbox_break_guards = true
 	hitbox_rehit_time = 0.075
 	if animatedSprite.frame >= 10 and animatedSprite.frame < 19:
-		hitbox_upleft = Vector2( - 78, - 46)
-		hitbox_downright = Vector2(49, 30)
+		hitbox_upleft = hitbox_shape_node.position - hitbox_shape_node.shape.extents
+		hitbox_downright = hitbox_shape_node.position + hitbox_shape_node.shape.extents
 		spawn_hitbox(hitbox_upleft, hitbox_downright)
 	reset_hitbox()
 
@@ -138,7 +139,6 @@ func _Setup() -> void :
 	strike_effect.frame = 0
 	strike_effect.visible = false
 	strike_effect.playing = false
-	strike_effect.scale = strike_effect_scale
 
 func reduce_speed() -> void :
 	horizontal_speed = 0
@@ -187,7 +187,8 @@ func update_strike_effect() -> void :
 			strike_effect.frame = 0
 			strike_effect.playing = true
 		var effect_frame = clamp(strike_effect.frame, 0, strike_effect_tail_compensation.size() - 1)
-		strike_effect.position = Vector2(facing_direction * (strike_effect_base_offset.x + strike_effect_tail_compensation[effect_frame]), strike_effect_base_offset.y)
+		var comp_scale: float = strike_effect.scale.x / strike_effect_reference_scale
+		strike_effect.position = Vector2(facing_direction * (effect_home.x + strike_effect_tail_compensation[effect_frame] * comp_scale), effect_home.y)
 	else:
 		strike_effect.visible = false
 		strike_effect.playing = false
