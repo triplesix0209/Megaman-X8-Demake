@@ -1,4 +1,4 @@
-[gd_scene load_steps=123 format=2]
+[gd_scene load_steps=122 format=2]
 
 [ext_resource path="res://src/Actors/Player/x_sprites/x.res" type="SpriteFrames" id=1]
 [ext_resource path="res://X_mod/UltimateX/Player/UltimateX.gd" type="Script" id=2]
@@ -31,7 +31,6 @@
 [ext_resource path="res://src/Effects/Textures/old_lemon_hit.png" type="Texture" id=29]
 [ext_resource path="res://src/Effects/Textures/smoke.png" type="Texture" id=30]
 [ext_resource path="res://src/Effects/Textures/dash.png" type="Texture" id=31]
-[ext_resource path="res://src/Effects/Textures/charge_1.png" type="Texture" id=32]
 [ext_resource path="res://src/Effects/Textures/charge_2.png" type="Texture" id=33]
 [ext_resource path="res://src/Effects/Textures/airdash.png" type="Texture" id=34]
 [ext_resource path="res://SpriteEffect.gd" type="Script" id=35]
@@ -110,7 +109,7 @@
 [ext_resource path="res://X_mod/UltimateX/Player/NovaStrike/NovaStrike.gd" type="Script" id=122]
 [ext_resource path="res://X_mod/UltimateX/Player/NovaStrike/NovaStrike.tres" type="Resource" id=123]
 [ext_resource path="res://X_mod/UltimateX/Sprites/nova_strike_effect.tres" type="SpriteFrames" id=124]
-[ext_resource path="res://src/Effects/Textures/follow_shot_ultimate.png" type="Texture" id=125]
+[ext_resource path="res://src/Effects/Textures/charge_1.png" type="Texture" id=125]
 [ext_resource path="res://src/Effects/Materials/buster_charged_particles.tres" type="Material" id=126]
 
 [sub_resource type="RectangleShape2D" id=32]
@@ -302,7 +301,7 @@ z_index = 4
 amount = 1
 lifetime = 0.3
 process_material = ExtResource( 84 )
-texture = ExtResource( 32 )
+texture = ExtResource( 125 )
 
 [node name="ChargedParticle" type="Particles2D" parent="animatedSprite"]
 pause_mode = 2
@@ -696,6 +695,7 @@ position = Vector2( -20.25, -5.25 )
 shape = SubResource( 45 )
 
 [node name="NovaTrail" type="Particles2D" parent="NovaStrike"]
+modulate = Color( 1, 0.8, 0.2, 1 )
 material = SubResource( 31 )
 position = Vector2( -20, -5 )
 z_index = 3
@@ -707,6 +707,7 @@ process_material = ExtResource( 126 )
 texture = ExtResource( 125 )
 
 [node name="NovaSparks" type="Particles2D" parent="NovaStrike"]
+modulate = Color( 1, 0.9, 0.3, 1 )
 material = SubResource( 31 )
 position = Vector2( 20, -5 )
 z_index = 5
