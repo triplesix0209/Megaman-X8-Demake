@@ -6,6 +6,10 @@ export  var upgraded: bool = true
 
 onready var animatedSprite: = character.get_node("animatedSprite")
 onready var sfx: = $sfx
+onready var strike_effect: AnimatedSprite = $strike_effect
+
+const strike_effect_base_offset: = Vector2(-35, -8)
+const strike_effect_tail_compensation: = [0.0, -13.5, -14.0]
 
 var current_hitbox: Object = null
 var hitbox_upleft: Vector2 = Vector2(0, 0)
@@ -130,6 +134,9 @@ func _Setup() -> void :
 	vertical_speed = vertical_start_speed
 	update_bonus_horizontal_only_conveyor()
 	animatedSprite.animation = "nova_strike"
+	strike_effect.frame = 0
+	strike_effect.visible = false
+	strike_effect.playing = false
 
 func reduce_speed() -> void :
 	horizontal_speed = 0
@@ -147,6 +154,7 @@ func damp_vertical_speed(_delta: float) -> void :
 func _Update(_delta: float) -> void :
 	hitbox_and_position()
 	play_sfx()
+	update_strike_effect()
 	if movement_frames():
 		force_movement(horizontal_speed)
 		
@@ -166,9 +174,28 @@ func _Update(_delta: float) -> void :
 func change_animation_if_falling(_s) -> void :
 	pass
 
+func update_strike_effect() -> void :
+	if not is_instance_valid(strike_effect):
+		return
+	var facing_direction = get_facing_direction()
+	strike_effect.flip_h = facing_direction == -1
+	if movement_frames():
+		if not strike_effect.visible:
+			strike_effect.visible = true
+			strike_effect.frame = 0
+			strike_effect.playing = true
+		var effect_frame = clamp(strike_effect.frame, 0, strike_effect_tail_compensation.size() - 1)
+		strike_effect.position = Vector2(facing_direction * (strike_effect_base_offset.x + strike_effect_tail_compensation[effect_frame]), strike_effect_base_offset.y)
+	else:
+		strike_effect.visible = false
+		strike_effect.playing = false
+
 func _Interrupt() -> void :
 	._Interrupt()
 	character.execute_nova_strike = false
 	character.remove_invulnerability("NovaStrike")
+	if is_instance_valid(strike_effect):
+		strike_effect.visible = false
+		strike_effect.playing = false
 	if is_instance_valid(current_hitbox):
 		current_hitbox.queue_free()

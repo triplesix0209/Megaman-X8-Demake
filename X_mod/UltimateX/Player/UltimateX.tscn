@@ -103,13 +103,13 @@
 [ext_resource path="res://src/Sounds/FX - Subtank Charge.ogg" type="AudioStream" id=105]
 [ext_resource path="res://src/Options/HotSwap.tscn" type="PackedScene" id=106]
 [ext_resource path="res://src/Actors/Player/Talk.gd" type="Script" id=107]
-[ext_resource path="res://src/Effects/Textures/hit_vfx.png" type="Texture" id=108]
 [ext_resource path="res://src/Actors/Bosses/Lumine/afterImages.gd" type="Script" id=109]
 [ext_resource path="res://src/Effects/Materials/mat_smokeparticle.tres" type="Material" id=110]
 [ext_resource path="res://src/Actors/Weapons/Projectiles/Icarus Lemon.tscn" type="PackedScene" id=115]
 [ext_resource path="res://X_mod/UltimateX/Sprites/x_ultimate.tres" type="SpriteFrames" id=120]
 [ext_resource path="res://X_mod/UltimateX/Player/NovaStrike/NovaStrike.gd" type="Script" id=122]
 [ext_resource path="res://X_mod/UltimateX/Player/NovaStrike/NovaStrike.tres" type="Resource" id=123]
+[ext_resource path="res://X_mod/UltimateX/Sprites/nova_strike_effect.tres" type="SpriteFrames" id=124]
 
 [sub_resource type="RectangleShape2D" id=32]
 extents = Vector2( 6.995, 7 )
@@ -118,23 +118,18 @@ extents = Vector2( 6.995, 7 )
 extents = Vector2( 7, 8 )
 
 [sub_resource type="AtlasTexture" id=43]
-atlas = ExtResource( 108 )
 region = Rect2( 64, 56, 64, 56 )
 
 [sub_resource type="AtlasTexture" id=39]
-atlas = ExtResource( 108 )
 region = Rect2( 0, 0, 64, 56 )
 
 [sub_resource type="AtlasTexture" id=40]
-atlas = ExtResource( 108 )
 region = Rect2( 64, 0, 64, 56 )
 
 [sub_resource type="AtlasTexture" id=41]
-atlas = ExtResource( 108 )
 region = Rect2( 128, 0, 64, 56 )
 
 [sub_resource type="AtlasTexture" id=42]
-atlas = ExtResource( 108 )
 region = Rect2( 0, 56, 64, 56 )
 
 [sub_resource type="SpriteFrames" id=44]
@@ -682,6 +677,12 @@ stream = ExtResource( 49 )
 volume_db = -8.0
 pitch_scale = 0.94
 bus = "SFX"
+
+[node name="strike_effect" type="AnimatedSprite" parent="NovaStrike"]
+visible = false
+position = Vector2( -35, -8 )
+z_index = 4
+frames = ExtResource( 124 )
 
 [node name="Shoryuuken" type="Node2D" parent="."]
 script = ExtResource( 54 )
