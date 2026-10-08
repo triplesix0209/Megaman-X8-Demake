@@ -87,16 +87,43 @@ func apply_buff() -> void :
 		character.add_invulnerability("xdrive")
 		vfx.frame = 0
 		buffed = true
+		apply_xdrive_stats()
 		emit_signal("activated")
 		Event.emit_signal("xdrive")
 
+func apply_xdrive_stats() -> void :
+	if is_instance_valid(charge):
+		charge.charge_time_reduction = 0.75
+	apply_speed_multiplier(2.0)
+
 func remove_buff() -> void :
+	if buffed:
+		remove_xdrive_stats()
 	character.remove_invulnerability("xdrive")
 	trail.visible = false
 	buffed = false
 	if is_instance_valid(particles_2d):
 		particles_2d.emitting = false
 	emit_signal("deactivated")
+
+func remove_xdrive_stats() -> void :
+	apply_speed_multiplier(0.5)
+	if is_instance_valid(charge):
+		var armor = null
+		if is_instance_valid(character):
+			armor = character.get("current_armor")
+		if armor != null and "hermes_head" in armor:
+			charge.charge_time_reduction = 0.5
+		else:
+			charge.charge_time_reduction = 0.0
+
+func apply_speed_multiplier(mult: float) -> void :
+	if not is_instance_valid(character):
+		return
+	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash"]:
+		var node = character.get_node_or_null(node_name)
+		if node != null and node.get("horizontal_velocity") != null:
+			node.horizontal_velocity *= mult
 
 func _physics_process(delta: float) -> void :
 	timer += delta

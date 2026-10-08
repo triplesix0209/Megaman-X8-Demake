@@ -102,10 +102,24 @@ func invulnerable(state: bool) -> void :
 	if upgraded and invulnerability_duration > 0:
 		if state:
 			character.add_invulnerability(name)
+			set_ghost_fade(true)
 		else:
 			character.remove_invulnerability(name)
+			set_ghost_fade(false)
 		sprite_effect.visible = state
 		ghost_particle.emitting = state
+
+func set_ghost_fade(enabled: bool) -> void :
+	if not is_instance_valid(character) or character.animatedSprite == null:
+		return
+	if enabled:
+		var c = character.animatedSprite.modulate
+		c.a = 0.2
+		character.animatedSprite.modulate = c
+	else:
+		var c2 = character.animatedSprite.modulate
+		c2.a = 1.0
+		character.animatedSprite.modulate = c2
 
 func process_invulnerability():
 	if upgraded and invulnerability_duration > 0:

@@ -123,13 +123,22 @@ func process_flash(delta):
 			end_flash()
 
 func equip_hermes_head_parts():
-	get_node("Charge").charge_time_reduction = 0.45
+	get_node("Charge").charge_time_reduction = 0.5
 	get_node("JumpDamage").deactivate()
+	set_boss_weapon_cost_multiplier(0.5)
+
+func set_boss_weapon_cost_multiplier(value: float) -> void:
+	var cannon = get_node("Shot")
+	for child in cannon.get_children():
+		if child is BossWeapon:
+			child.ammo_cost_multiplier = value
 
 func equip_hermes_body_parts():
 	var dmg = get_node("Damage")
-	dmg.damage_reduction = 33
+	dmg.damage_reduction = 0
 	dmg.prevent_knockbacks = false
+	dmg.damage_threshold = 2
+	dmg.invulnerability_time = 2.625
 	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
 	get_node("LifeSteal").activate()
 
@@ -138,12 +147,13 @@ func equip_hermes_arms_parts():
 	var hermes_Buster = cannon.get_node("Hermes Buster")
 	var icarus_Buster = cannon.get_node("Icarus Buster")
 	var altfire = get_node("AltFire")
-	
+
 	hermes_Buster.active = true
+	hermes_Buster.max_shots_alive = 5
 	icarus_Buster.active = false
 	cannon.upgraded = true
 	cannon.infinite_charged_ammo = false
-	cannon.infinite_regular_ammo = true
+	cannon.infinite_regular_ammo = false
 	cannon.update_list_of_weapons()
 	cannon.set_current_weapon(hermes_Buster)
 	altfire.switch_to_hermes()
@@ -152,40 +162,26 @@ func equip_hermes_arms_parts():
 func equip_hermes_legs_parts():
 	var dash = get_node("Dash")
 	var airdash = get_node("AirDash")
-	var airjump = get_node("AirJump")
-	var fall = get_node("Fall")
+	dash.dash_duration = 0.55 * 1.25
+	airdash.dash_duration = 0.475 * 1.25
 	dash.upgraded = true
-	dash.invulnerability_duration = 0.475
-	airjump.set_max_air_jumps(0)
 	airdash.upgraded = true
 	airdash.max_airdashes = 1
-	airdash.airdash_count = 2
-	airdash.invulnerability_duration = 0.475
-	get_node("Jump").max_jump_time = 0.625
-	get_node("Jump").jump_velocity = 320
-	get_node("DashJump").max_jump_time = 0.625
-	get_node("DashJump").jump_velocity = 320
-	get_node("WallJump").max_jump_time = 0.625
-	get_node("WallJump").jump_velocity = 320
-	get_node("DashWallJump").max_jump_time = 0.625
-	get_node("DashWallJump").jump_velocity = 320
-	
-	get_node("Walk").horizontal_velocity = 120
-	get_node("Jump").horizontal_velocity = 120
-	get_node("Jump").dash_momentum = 250
-	get_node("DashJump").horizontal_velocity = 250
-	get_node("WallJump").horizontal_velocity = 120
-	get_node("DashWallJump").horizontal_velocity = 250
-	airjump.horizontal_velocity = 120
-	airjump.normal_momentum = 120
-	airjump.dash_momentum = 250
-	dash.horizontal_velocity = 250
-	airdash.horizontal_velocity = 250
-	fall.horizontal_velocity = 120
-	fall.dash_momentum = 250
+	airdash.airdash_count = 1
+	dash.invulnerability_duration = dash.dash_duration
+	airdash.invulnerability_duration = airdash.dash_duration
+	var dmg = get_node("Damage")
+	dmg.damage_threshold = max(dmg.damage_threshold, 3)
+
+	get_node("Walk").horizontal_velocity = 90.0 * 1.5
+	get_node("Jump").horizontal_velocity = 90.0 * 1.5
+	get_node("DashJump").horizontal_velocity = 210.0 * 1.5
+	dash.horizontal_velocity = 210.0 * 1.5
+	airdash.horizontal_velocity = 210.0 * 1.5
 
 func equip_icarus_head_parts():
 	get_node("Charge").charge_time_reduction = 0
+	set_boss_weapon_cost_multiplier(1.0)
 	get_node("JumpDamage").activate()
 
 func equip_icarus_body_parts():
@@ -193,6 +189,11 @@ func equip_icarus_body_parts():
 	dmg.damage_reduction = 50
 	dmg.prevent_knockbacks = true
 	dmg.conflicting_moves = ["Death", "Nothing"]
+	dmg.invulnerability_time = 1.75
+	if "hermes_legs" in current_armor:
+		dmg.damage_threshold = 3
+	else:
+		dmg.damage_threshold = 0
 	get_node("LifeSteal").deactivate()
 
 func equip_icarus_arms_parts():
@@ -245,6 +246,14 @@ func equip_icarus_legs_parts():
 	airdash.horizontal_velocity = 210
 	fall.horizontal_velocity = 90
 	fall.dash_momentum = 210
+	var dmg = get_node("Damage")
+	if "hermes_body" in current_armor:
+		dmg.damage_threshold = 2
+	else:
+		dmg.damage_threshold = 0
+	var c = animatedSprite.modulate
+	c.a = 1.0
+	animatedSprite.modulate = c
 
 func is_full_armor() -> String:
 	var armor_set: = 0

@@ -6,6 +6,7 @@ export  var debug_logs: = false
 export  var can_buffer: = true
 export  var weapon: Resource
 export  var current_ammo: = 28.0
+export  var ammo_cost_multiplier := 1.0
 export  var shoot_delay: float = 1
 const max_ammo: = 28.0
 const chargeable_without_ammo: = false
@@ -72,11 +73,11 @@ func set_position_as_character_position(shot) -> void :
 
 func reduce_regular_ammo() -> void :
 	if not buster.has_infinite_regular_ammo():
-		reduce_ammo(weapon.regular_ammo_cost)
+		reduce_ammo(weapon.regular_ammo_cost * ammo_cost_multiplier)
 
 func reduce_charged_ammo() -> void :
 	if not buster.has_infinite_charged_ammo():
-		reduce_ammo(weapon.charged_ammo_cost)
+		reduce_ammo(weapon.charged_ammo_cost * ammo_cost_multiplier)
 
 func reduce_ammo(value) -> void :
 	Log("Reducing ammo by " + str(value))

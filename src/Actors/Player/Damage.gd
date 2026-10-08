@@ -5,6 +5,7 @@ export  var duration_time: float = 0.6
 export  var invulnerability_time: float
 export  var prevent_knockbacks: bool = false
 export  var damage_reduction: float = 0.0
+export  var damage_threshold: float = 0.0
 export  var death_protection: int = 1
 
 onready var sparks: AnimatedSprite = get_node_or_null("sparks")
@@ -107,6 +108,8 @@ func _Interrupt() -> void :
 	character.apply_invulnerability_shader()
 
 func on_damage(value: float, inflicter: Object) -> void :
+	if value <= damage_threshold:
+		return
 	if should_be_damaged():
 		if not character.is_invulnerable():
 			damage_taken = value
