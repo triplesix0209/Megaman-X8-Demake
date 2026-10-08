@@ -4,13 +4,13 @@ onready var particles: Particles2D = $particles2D
 
 
 func go_up(speed) -> void:
-	set_vertical_speed(-speed/2)
+	set_vertical_speed(-speed * 0.7071)
 func go_down(speed) -> void:
-	set_vertical_speed(speed/2)
+	set_vertical_speed(speed * 0.7071)
 func go_right(speed) -> void:
-	set_horizontal_speed(speed/2)
+	set_horizontal_speed(speed * 0.7071)
 func go_left(speed) -> void:
-	set_horizontal_speed(-speed/2)
+	set_horizontal_speed(-speed * 0.7071)
 	
 func update_facing_direction() -> void:
 	if animatedSprite.visible:

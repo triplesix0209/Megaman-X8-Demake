@@ -10,7 +10,7 @@
 [ext_resource path="res://src/Actors/Weapons/Projectiles/medium_shot.res" type="SpriteFrames" id=8]
 
 [sub_resource type="RectangleShape2D" id=11]
-extents = Vector2( 15, 16 )
+extents = Vector2( 17.5, 11 )
 
 [node name="Medium" type="KinematicBody2D" groups=["Player Projectile"]]
 z_index = 6
@@ -25,11 +25,11 @@ fire_sound = ExtResource( 6 )
 [node name="animatedSprite" type="AnimatedSprite" parent="."]
 frames = ExtResource( 8 )
 animation = "loop"
-frame = 7
+frame = 3
 playing = true
 
 [node name="collisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 1, 0 )
+position = Vector2( 3.5, 0 )
 shape = SubResource( 11 )
 
 [node name="visibilityNotifier2D" type="VisibilityNotifier2D" parent="."]

@@ -15,7 +15,7 @@
 extents = Vector2( 17, 18 )
 
 [sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 17, 32 )
+extents = Vector2( 17, 18 )
 
 [sub_resource type="CanvasItemMaterial" id=6]
 particles_animation = true
