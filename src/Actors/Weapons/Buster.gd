@@ -78,6 +78,12 @@ func start_laser_lock(shot: Node) -> void :
 			removed_stasis_conflict = true
 	if is_instance_valid(character):
 		character.set_meta("laser_lock", true)
+		var sp = character.get_node_or_null("Shot Position")
+		if sp != null and is_instance_valid(shot):
+			var y_off := -1.0
+			if not character.is_on_floor() and character.get_vertical_speed() < 0.0:
+				y_off = -3.0
+			shot.global_position.y = sp.global_position.y + y_off
 		var stasis = character.get_node_or_null("WeaponStasis")
 		if stasis and not stasis.executing:
 			stasis.ExecuteOnce()
