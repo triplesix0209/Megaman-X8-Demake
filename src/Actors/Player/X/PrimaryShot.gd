@@ -20,6 +20,8 @@ func _ready() -> void :
 		Event.listen("add_to_ammo_reserve", self, "_on_add_to_ammo_reserve")
 
 func charged_shot_release(_charge_level):
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return
 	if not character.has_control():
 		Log("Couldn\'t charged fire, character has no control")
 		return
@@ -46,6 +48,8 @@ func fire_charged(_charge_level) -> void :
 	ExecuteOnce()
 
 func _StartCondition() -> bool:
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return false
 	if current_weapon and character.has_control():
 		if current_weapon.name == "XDrive":
 			return current_weapon.has_ammo()
@@ -77,18 +81,24 @@ func fire(weapon):
 	charge_level = 0
 
 func change_current_weapon_left():
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return
 	Log("Changing weapon left")
 	var index = weapons.find(current_weapon)
 	set_current_weapon(weapons[(index + weapons.size() - 1) % weapons.size()])
 	Log("New weapon: " + current_weapon.name)
 
 func change_current_weapon_right():
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return
 	Log("Changing weapon right")
 	var index = weapons.find(current_weapon)
 	set_current_weapon(weapons[(index + 1) % weapons.size()])
 	Log("New weapon: " + current_weapon.name)
 
 func set_current_weapon(weapon):
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return
 	current_weapon = weapon
 	update_character_palette()
 	Log("Changed Weapon to " + current_weapon.name)

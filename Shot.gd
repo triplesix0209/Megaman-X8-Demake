@@ -19,7 +19,14 @@ func _ready() -> void:
 		Event.listen("shot_layer_disabled",self,"on_shot_layer_disabled")
 		Event.listen("shot_layer_enabled",self,"on_shot_layer_enabled")
 
+func is_laser_lock_active() -> bool:
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return true
+	return false
+
 func _StartCondition() -> bool:
+	if is_laser_lock_active():
+		return false
 	if current_weapon:
 		return current_weapon.has_ammo()
 	return false
@@ -48,6 +55,8 @@ func got_hit() -> bool:
 
 func _Update(_delta:float) -> void:
 	if got_hit():
+		return
+	if is_laser_lock_active():
 		return
 	
 	if action_just_pressed() and not is_initial_frame():

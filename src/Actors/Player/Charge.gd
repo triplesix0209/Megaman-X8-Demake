@@ -77,6 +77,8 @@ func BANDAID_stop_audio_if_not_executing():
 			Log("Forcefully stopped undesired playing sound")
 
 func _StartCondition() -> bool:
+	if is_instance_valid(character) and character.has_meta("laser_lock"):
+		return false
 	if not current_weapon:
 		update_current_weapon(arm_cannon.current_weapon)
 	if current_weapon is BossWeapon and not arm_cannon.upgraded:
