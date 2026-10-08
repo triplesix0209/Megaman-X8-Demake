@@ -146,7 +146,7 @@ animations = [ {
 } ]
 
 [sub_resource type="RectangleShape2D" id=45]
-extents = Vector2( 64.5, 30.5 )
+extents = Vector2( 53.75, 35.75 )
 
 [sub_resource type="CanvasItemMaterial" id=31]
 particles_animation = true
@@ -682,13 +682,15 @@ pitch_scale = 0.94
 bus = "SFX"
 
 [node name="strike_effect" type="AnimatedSprite" parent="NovaStrike"]
-position = Vector2( -32, -7 )
-scale = Vector2( 1.5, 1.5 )
+visible = false
+position = Vector2( -20, -7 )
+scale = Vector2( 1.26613, 1.79032 )
 z_index = 4
 frames = ExtResource( 124 )
 
 [node name="HitboxShape" type="CollisionShape2D" parent="NovaStrike"]
-position = Vector2( -32.5, -5.5 )
+visible = false
+position = Vector2( -20.25, -5.25 )
 shape = SubResource( 45 )
 
 [node name="Shoryuuken" type="Node2D" parent="."]
