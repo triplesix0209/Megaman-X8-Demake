@@ -4,6 +4,7 @@ export  var horizontal_speed: = 800.0
 var light_tween
 var charges_left: = 0
 var dash_timer: = 0.0
+var dashing := false
 var charged_timer = Timer.new()
 var cooldown_timer = Timer.new()
 var safe_conclusion: = false
@@ -44,6 +45,7 @@ func fire_charged() -> void :
 	dash_forward()
 
 func dash_forward() -> void :
+	dashing = true
 	var dir: = 0
 	if Input.is_action_pressed("move_left"):
 		dir = - 1
@@ -99,6 +101,9 @@ func stasis_interrupt() -> void :
 var post_thunder_timer: Timer
 
 func end() -> void :
+	if not dashing:
+		return
+	dashing = false
 	make_character_visible()
 	character.set_horizontal_speed(0)
 	set_physics_process(false)
