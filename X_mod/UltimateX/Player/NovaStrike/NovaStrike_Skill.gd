@@ -8,8 +8,9 @@ onready var animatedSprite: = character.get_node("animatedSprite")
 onready var sfx: = $sfx
 onready var strike_effect: AnimatedSprite = $strike_effect
 
-const strike_effect_base_offset: = Vector2(-35, -8)
-const strike_effect_tail_compensation: = [0.0, -13.5, -14.0]
+const strike_effect_base_offset: = Vector2(-48, -8)
+const strike_effect_tail_compensation: = [0.0, -20.5, -21.0]
+const strike_effect_scale: = Vector2(1.5, 1.5)
 
 var current_hitbox: Object = null
 var hitbox_upleft: Vector2 = Vector2(0, 0)
@@ -92,8 +93,8 @@ func hitbox_and_position() -> void :
 	hitbox_break_guards = true
 	hitbox_rehit_time = 0.075
 	if animatedSprite.frame >= 10 and animatedSprite.frame < 19:
-		hitbox_upleft = Vector2( - 57, - 33)
-		hitbox_downright = Vector2(28, 17)
+		hitbox_upleft = Vector2( - 78, - 46)
+		hitbox_downright = Vector2(49, 30)
 		spawn_hitbox(hitbox_upleft, hitbox_downright)
 	reset_hitbox()
 
@@ -137,6 +138,7 @@ func _Setup() -> void :
 	strike_effect.frame = 0
 	strike_effect.visible = false
 	strike_effect.playing = false
+	strike_effect.scale = strike_effect_scale
 
 func reduce_speed() -> void :
 	horizontal_speed = 0

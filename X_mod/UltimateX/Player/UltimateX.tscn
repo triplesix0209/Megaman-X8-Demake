@@ -680,7 +680,7 @@ bus = "SFX"
 
 [node name="strike_effect" type="AnimatedSprite" parent="NovaStrike"]
 visible = false
-position = Vector2( -35, -8 )
+position = Vector2( -48, -8 )
 z_index = 4
 frames = ExtResource( 124 )
 
