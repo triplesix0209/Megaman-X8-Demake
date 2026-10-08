@@ -1,0 +1,15 @@
+
+Godot Engine v3.5.3.stable.official.6c814135b - https://godotengine.org
+OpenGL ES 3.0 Renderer: NVIDIA GeForce RTX 5070 Ti/PCIe/SSE2
+Async. shader compilation: ON (full native support)
+Shader cache: ON
+ 
+ERROR: 'Assignment operation, but the function 'finish()' returns void.'
+ERROR: 'Assignment operation, but the function 'finish()' returns void.'
+ERROR: 'Function declaration of 'hit()' conflicts with a variable of the same name.'
+ERROR: 'Function declaration of 'hit()' conflicts with a variable of the same name.'
+GameManager: Initializing...
+RNGSystem: Initializing...
+GameManager: On Level Start...
+RNGSystem: Resetting seed to 0
+ERROR: 'Function declaration of 'fade()' conflicts with a variable of the same name.'
