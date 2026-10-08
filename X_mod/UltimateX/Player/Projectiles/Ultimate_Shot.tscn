@@ -50,7 +50,7 @@ position = Vector2( 5, 0 )
 z_index = 2
 frames = ExtResource( 1 )
 animation = "Tag"
-frame = 3
+frame = 4
 playing = true
 
 [node name="visibilityNotifier2D" type="VisibilityNotifier2D" parent="."]

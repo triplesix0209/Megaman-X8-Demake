@@ -37,7 +37,7 @@ break_guards = true
 z_index = 2
 frames = ExtResource( 9 )
 animation = "Tag"
-frame = 6
+frame = 4
 playing = true
 
 [node name="collisionShape2D" type="CollisionShape2D" parent="."]
