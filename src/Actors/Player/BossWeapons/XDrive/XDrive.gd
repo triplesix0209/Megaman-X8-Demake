@@ -92,6 +92,10 @@ func apply_buff() -> void :
 		Event.emit_signal("xdrive")
 
 func apply_xdrive_stats() -> void :
+	# Spec X-Drive: x4 Charge (0.75, gap doi Head H 0.5) + x2 speed
+	# (Walk/Jump/Dash/DashJump/AirDash). Mien nhiem + hoi Red Health
+	# xu ly o apply_buff() (add_invulnerability) + Event xdrive -> LifeSteal.
+	# Triad 5 thay vi 3 xu ly o TripleBuster.create_five_way_shots().
 	if is_instance_valid(charge):
 		charge.charge_time_reduction = 0.75
 	apply_speed_multiplier(2.0)
@@ -120,7 +124,7 @@ func remove_xdrive_stats() -> void :
 func apply_speed_multiplier(mult: float) -> void :
 	if not is_instance_valid(character):
 		return
-	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash"]:
+	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash", "WallJump", "DashWallJump"]:
 		var node = character.get_node_or_null(node_name)
 		if node != null and node.get("horizontal_velocity") != null:
 			node.horizontal_velocity *= mult

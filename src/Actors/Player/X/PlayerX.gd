@@ -123,9 +123,10 @@ func process_flash(delta):
 			end_flash()
 
 func equip_hermes_head_parts():
+	# Spec Head H: x2 Charge Speed (time * 0.5) + Boss Weapon -50% (normal + charged).
 	get_node("Charge").charge_time_reduction = 0.5
-	get_node("JumpDamage").deactivate()
 	set_boss_weapon_cost_multiplier(0.5)
+	get_node("JumpDamage").deactivate()
 
 func set_boss_weapon_cost_multiplier(value: float) -> void:
 	var cannon = get_node("Shot")
@@ -134,15 +135,20 @@ func set_boss_weapon_cost_multiplier(value: float) -> void:
 			child.ammo_cost_multiplier = value
 
 func equip_hermes_body_parts():
+	# Spec Body H: x1.5 I-Frame (1.75 * 1.5), mien nhiem damage <= 2, Red Hit Life Steal.
+	# Bo effect cu: khong giam % damage (damage_reduction = 0), chi dung threshold + iframes.
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = 0
 	dmg.prevent_knockbacks = false
-	dmg.damage_threshold = 2
-	dmg.invulnerability_time = 2.625
+	dmg.damage_threshold = max(dmg.damage_threshold, 2)
+	dmg.invulnerability_time = 1.75 * 1.5
 	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
 	get_node("LifeSteal").activate()
 
 func equip_hermes_arms_parts():
+	# Spec Buster H: cho phep charge boss weapon (upgraded=true),
+	# lemon toi da 5, charged lv3 = Triad Charged Buster (theo Hermes Buster.tscn shots[3]).
+	# Bo effect cu: khong infinite ammo, tieu hao thuong (duoc Head H giam 50% neu co).
 	var cannon = get_node("Shot")
 	var hermes_Buster = cannon.get_node("Hermes Buster")
 	var icarus_Buster = cannon.get_node("Icarus Buster")
@@ -160,6 +166,9 @@ func equip_hermes_arms_parts():
 	
 
 func equip_hermes_legs_parts():
+	# Spec Leg H: dash x1.25 (ground 0.55, air 0.475), speed x1.5
+	# (Walk/Jump/DashJump/Dash/AirDash + WallJump/DashWallJump = Slide Jump/Slide Dash Jump),
+	# ghost dash: invuln suot dash (xuyen dan) + mien nhiem damage <= 3 (threshold, giu ca ngoai dash).
 	var dash = get_node("Dash")
 	var airdash = get_node("AirDash")
 	get_node("AirJump").set_max_air_jumps(0)
@@ -177,6 +186,8 @@ func equip_hermes_legs_parts():
 	get_node("Walk").horizontal_velocity = 90.0 * 1.5
 	get_node("Jump").horizontal_velocity = 90.0 * 1.5
 	get_node("DashJump").horizontal_velocity = 210.0 * 1.5
+	get_node("WallJump").horizontal_velocity = 90.0 * 1.5
+	get_node("DashWallJump").horizontal_velocity = 210.0 * 1.5
 	dash.horizontal_velocity = 210.0 * 1.5
 	airdash.horizontal_velocity = 210.0 * 1.5
 
@@ -294,6 +305,10 @@ func is_weapon(collectible: String) -> bool:
 
 func equip_weapon(collectible: String) -> void :
 	get_node("Shot").unlock_weapon(collectible)
+	# Head H giam 50% ca normal + charged (qua ammo_cost_multiplier).
+	# Ap lai cho vu khi unlock sau khi da lay Head.
+	if "hermes_head" in current_armor:
+		set_boss_weapon_cost_multiplier(0.5)
 	
 func get_current_weapon():
 	return get_node("Shot").current_weapon
