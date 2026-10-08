@@ -106,7 +106,7 @@ func invulnerable(state: bool) -> void :
 		else:
 			character.remove_invulnerability(name)
 			set_ghost_fade(false)
-		sprite_effect.visible = state
+		sprite_effect.visible = false
 		ghost_particle.emitting = state
 
 func set_ghost_fade(enabled: bool) -> void :

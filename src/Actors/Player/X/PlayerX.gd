@@ -162,6 +162,7 @@ func equip_hermes_arms_parts():
 func equip_hermes_legs_parts():
 	var dash = get_node("Dash")
 	var airdash = get_node("AirDash")
+	get_node("AirJump").set_max_air_jumps(0)
 	dash.dash_duration = 0.55 * 1.25
 	airdash.dash_duration = 0.475 * 1.25
 	dash.upgraded = true
