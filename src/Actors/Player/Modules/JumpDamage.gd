@@ -4,6 +4,9 @@ export  var duration: = 0.65
 export  var damage_value: = 3
 export  var damage_to_bosses: = 2
 export  var damage_frequency: = 0.04
+export  var effect_face_nudge := 3.0
+var _base_effect_pos := Vector2.ZERO
+var _base_captured := false
 var next_damage_time: = 0.02
 var target_list = []
 var damaged_target_list = []
@@ -15,13 +18,17 @@ export  var break_guard_damage = 0
 
 func _ready() -> void :
 	effect.visible = false
+	_base_effect_pos = effect.position
+	_base_captured = true
 
 func _Setup() -> void :
 	stop_disappear()
 	collider.disabled = false
 	damage_area.facing_direction = character.get_facing_direction()
 	effect.visible = true
-	effect.position.x = 3 * character.get_facing_direction()
+	if _base_captured:
+		effect.position = _base_effect_pos
+	effect.position.x += effect_face_nudge * character.get_facing_direction()
 	effect.frame = 0
 	damaged_target_list.clear()
 	
