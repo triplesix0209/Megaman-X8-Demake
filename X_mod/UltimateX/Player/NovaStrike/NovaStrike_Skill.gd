@@ -9,6 +9,8 @@ onready var sfx: = $sfx
 onready var strike_effect: AnimatedSprite = $strike_effect
 onready var hitbox_shape_node: CollisionShape2D = $HitboxShape
 onready var effect_home: Vector2 = $strike_effect.position
+onready var nova_trail: Particles2D = $NovaTrail
+onready var nova_sparks: Particles2D = $NovaSparks
 
 const strike_effect_tail_compensation: = [0.0, -20.5, -21.0]
 const strike_effect_reference_scale: = 1.5
@@ -139,6 +141,10 @@ func _Setup() -> void :
 	strike_effect.frame = 0
 	strike_effect.visible = false
 	strike_effect.playing = false
+	if is_instance_valid(nova_trail):
+		nova_trail.emitting = false
+	if is_instance_valid(nova_sparks):
+		nova_sparks.emitting = false
 
 func reduce_speed() -> void :
 	horizontal_speed = 0
@@ -157,6 +163,7 @@ func _Update(_delta: float) -> void :
 	hitbox_and_position()
 	play_sfx()
 	update_strike_effect()
+	update_nova_particles()
 	if movement_frames():
 		force_movement(horizontal_speed)
 		
@@ -193,6 +200,20 @@ func update_strike_effect() -> void :
 		strike_effect.visible = false
 		strike_effect.playing = false
 
+func update_nova_particles() -> void :
+	var facing_direction = get_facing_direction()
+	var active = movement_frames()
+	for particles in [nova_trail, nova_sparks]:
+		if not is_instance_valid(particles):
+			continue
+		particles.emitting = active
+		if active:
+			particles.scale.x = facing_direction
+			if particles == nova_trail:
+				particles.position = Vector2(-20.0 * facing_direction, -5.0)
+			else:
+				particles.position = Vector2(20.0 * facing_direction, -5.0)
+
 func _Interrupt() -> void :
 	._Interrupt()
 	character.execute_nova_strike = false
@@ -200,5 +221,8 @@ func _Interrupt() -> void :
 	if is_instance_valid(strike_effect):
 		strike_effect.visible = false
 		strike_effect.playing = false
+	for particles in [nova_trail, nova_sparks]:
+		if is_instance_valid(particles):
+			particles.emitting = false
 	if is_instance_valid(current_hitbox):
 		current_hitbox.queue_free()
