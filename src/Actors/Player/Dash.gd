@@ -2,8 +2,6 @@ extends Movement
 class_name Dash
 
 export  var dash_duration: = 0.55
-export  var upgraded: = false
-export  var invulnerability_duration: = 0.0
 export  var leeway: = 0.1
 export  var shot_pos_adjust: = Vector2(18, 4)
 
@@ -11,8 +9,10 @@ onready var particles = character.get_node("animatedSprite").get_node("Dash Smok
 onready var dash_particle = get_node("dash_particle")
 
 var ghost_particle
-var sprite_effect
 var _dash
+var ghost_dash: bool = false
+var saved_damage_threshold: float = 0.0
+var ghost_threshold_applied: bool = false
 var emitted_dash: = false
 var left_ground_timer: = 0.0
 var can_dash: = true
@@ -22,7 +22,6 @@ func get_shot_adust_position() -> Vector2:
 	return shot_pos_adjust
 
 func _ready() -> void :
-	sprite_effect = get_node("duringImage")
 	ghost_particle = get_node("particles2D")
 	
 func get_activation_leeway_time() -> float:
@@ -34,7 +33,7 @@ func _Setup() -> void :
 	update_bonus_horizontal_only_conveyor()
 	emit_particles(particles, true)
 	character.reduce_hitbox()
-	invulnerable(true)
+	apply_ghost_threshold()
 	emitted_dash = false
 	changed_animation = false
 	left_ground_timer = 0
@@ -51,7 +50,6 @@ func emit_dash_particle():
 		emitted_dash = true
 
 func _Update(_delta: float) -> void :
-	process_invulnerability()
 	increase_left_ground_timer(_delta)
 	if can_dash and should_dash():
 		on_dash()
@@ -64,7 +62,7 @@ func _Update(_delta: float) -> void :
 		if left_ground_timer == 0.0:
 			left_ground_timer = 0.01
 			character.set_vertical_speed(0)
-			invulnerable(false)
+			remove_ghost_threshold()
 		change_animation_if_falling("fall")
 		set_movement_and_direction(horizontal_velocity)
 		process_gravity(_delta)
@@ -80,13 +78,6 @@ func process_gravity(delta: float, gravity: float = default_gravity, _s = "null"
 func on_dash() -> void :
 	pass
 
-func synchronize_sprite_effect() -> void :
-	if invulnerability_duration > 0:
-		sprite_effect.frames = character.animatedSprite.frames
-		sprite_effect.frame = character.animatedSprite.frame
-		sprite_effect.set_scale(Vector2(character.get_facing_direction(), 1))
-		ghost_particle.set_scale(Vector2(character.get_facing_direction(), 1))
-
 func change_animation_if_falling(_s) -> void :
 	EndAbility()
 	character.start_dashfall()
@@ -95,19 +86,38 @@ func _Interrupt() -> void :
 	if not changed_animation:
 		character.call_deferred("increase_hitbox")
 	emit_particles(particles, false)
-	invulnerable(false)
+	remove_ghost_threshold()
 	._Interrupt()
 
-func invulnerable(state: bool) -> void :
-	if upgraded and invulnerability_duration > 0:
-		if state:
-			character.add_invulnerability(name)
-			set_ghost_fade(true)
-		else:
-			character.remove_invulnerability(name)
-			set_ghost_fade(false)
-		sprite_effect.visible = false
-		ghost_particle.emitting = state
+func has_ghost_legs() -> bool:
+	return ghost_dash == true
+
+func apply_ghost_threshold() -> void :
+	if ghost_threshold_applied or not has_ghost_legs():
+		return
+	var dmg = character.get_node_or_null("Damage")
+	if dmg == null:
+		return
+	var base_t: float = 0.0
+	if is_instance_valid(character) and character.get("base_damage_threshold") != null:
+		base_t = character.get("base_damage_threshold")
+	saved_damage_threshold = dmg.damage_threshold
+	dmg.damage_threshold = max(saved_damage_threshold, base_t + 3.0)
+	ghost_threshold_applied = true
+	set_ghost_fade(true)
+	if is_instance_valid(ghost_particle):
+		ghost_particle.emitting = true
+
+func remove_ghost_threshold() -> void :
+	if not ghost_threshold_applied:
+		return
+	ghost_threshold_applied = false
+	var dmg = character.get_node_or_null("Damage")
+	if dmg != null:
+		dmg.damage_threshold = saved_damage_threshold
+	set_ghost_fade(false)
+	if is_instance_valid(ghost_particle):
+		ghost_particle.emitting = false
 
 func set_ghost_fade(enabled: bool) -> void :
 	if not is_instance_valid(character) or character.animatedSprite == null:
@@ -120,12 +130,6 @@ func set_ghost_fade(enabled: bool) -> void :
 		var c2 = character.animatedSprite.modulate
 		c2.a = 1.0
 		character.animatedSprite.modulate = c2
-
-func process_invulnerability():
-	if upgraded and invulnerability_duration > 0:
-		synchronize_sprite_effect()
-		if timer > invulnerability_duration:
-			invulnerable(false)
 
 func should_dash() -> bool:
 	return character.is_on_floor()

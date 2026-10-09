@@ -202,8 +202,7 @@ func equip_hermes_legs_parts():
 	var dash = get_node("Dash")
 	dash.dash_duration = base_dash_duration * 1.25
 	dash.horizontal_velocity = base_dash_speed * 1.5
-	dash.upgraded = true
-	dash.invulnerability_duration = dash.dash_duration
+	dash.ghost_dash = true
 
 	var walk = get_node("Walk")
 	walk.horizontal_velocity = base_walk_speed * 1.5
@@ -211,10 +210,9 @@ func equip_hermes_legs_parts():
 	var airdash = get_node("AirDash")
 	airdash.dash_duration = base_airdash_duration * 1.25
 	airdash.horizontal_velocity = base_airdash_speed * 1.5
-	airdash.upgraded = true
-	airdash.max_airdashes = base_max_airdashes
 	airdash.airdash_count = base_max_airdashes
-	airdash.invulnerability_duration = airdash.dash_duration
+	airdash.max_airdashes = base_max_airdashes
+	airdash.ghost_dash = true
 
 	var airjump = get_node("AirJump")
 	airjump.set_max_air_jumps(base_max_air_jumps)
@@ -252,12 +250,10 @@ func equip_icarus_legs_parts():
 	var airdash = get_node("AirDash")
 	var airjump = get_node("AirJump")
 	var fall = get_node("Fall")
-	dash.upgraded = false
 	dash.dash_duration = base_dash_duration
-	dash.invulnerability_duration = 0
-	airdash.upgraded = false
+	dash.ghost_dash = false
 	airdash.max_airdashes = 2
-	airdash.invulnerability_duration = 0
+	airdash.ghost_dash = false
 	airjump.set_max_air_jumps(1)
 	
 	get_node("Jump").max_jump_time = 0.75

@@ -174,12 +174,8 @@ func equip_ultima_legs_parts():
 	var airdash = get_node("AirDash")
 	var airjump = get_node("AirJump")
 	var fall = get_node("Fall")
-	dash.upgraded = true
 	dash.dash_duration = 0.55
-	dash.invulnerability_duration = 0.475
-	airdash.upgraded = true
 	airdash.dash_duration = 0.55
-	airdash.invulnerability_duration = 0.475
 	airdash.max_airdashes = 2
 	airdash.airdash_count = 2
 	
