@@ -18,6 +18,7 @@ var grabbed: bool = false
 var ride_eject_delay: float = 0.0
 var ride: Node2D
 var base_damage_reduction: float = 0.0
+var base_prevent_knockbacks: bool = false
 
 signal walljump
 signal wallslide
@@ -102,6 +103,7 @@ func _ready() -> void :
 	listen("land", self, "on_land")
 	save_original_colors()
 	base_damage_reduction = get_node("Damage").damage_reduction
+	base_prevent_knockbacks = get_node("Damage").prevent_knockbacks
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -139,27 +141,25 @@ func set_boss_weapon_cost_multiplier(value: float) -> void:
 		if child is BossWeapon:
 			child.ammo_cost_multiplier = value
 
-# Spec Body H: +50% I-frame time, Immune damage <= 2, Red Life Steal.
+# Spec Body H: +50% I-frame time; Immune damage <= 2; Red Life Steal.
 func equip_hermes_body_parts():
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = base_damage_reduction
-	dmg.prevent_knockbacks = false
+	dmg.prevent_knockbacks = base_prevent_knockbacks
 	dmg.damage_threshold = max(dmg.damage_threshold, 2)
 	dmg.invulnerability_time *= 1.5
 	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
 	get_node("LifeSteal").activate()
 
+# Spec Buster H: Chargeable weapon (upgraded); +2 Lemon Shots; Triad Shots (lv3).
 func equip_hermes_arms_parts():
-	# Spec Buster H: cho phep charge boss weapon (upgraded=true),
-	# lemon toi da 5, charged lv3 = Triad Charged Buster (theo Hermes Buster.tscn shots[3]).
-	# Bo effect cu: khong infinite ammo, tieu hao thuong (duoc Head H giam 50% neu co).
 	var cannon = get_node("Shot")
 	var hermes_Buster = cannon.get_node("Hermes Buster")
 	var icarus_Buster = cannon.get_node("Icarus Buster")
 	var altfire = get_node("AltFire")
 
 	hermes_Buster.active = true
-	hermes_Buster.max_shots_alive = 5
+	hermes_Buster.max_shots_alive += 2
 	icarus_Buster.active = false
 	cannon.upgraded = true
 	cannon.infinite_charged_ammo = false
