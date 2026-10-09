@@ -19,6 +19,8 @@ var ride_eject_delay: float = 0.0
 var ride: Node2D
 var base_damage_reduction: float = 0.0
 var base_prevent_knockbacks: bool = false
+var base_charge_time_reduction: float = 0.0
+var base_ammo_cost_multiplier: float = 1.0
 
 signal walljump
 signal wallslide
@@ -104,6 +106,11 @@ func _ready() -> void :
 	save_original_colors()
 	base_damage_reduction = get_node("Damage").damage_reduction
 	base_prevent_knockbacks = get_node("Damage").prevent_knockbacks
+	base_charge_time_reduction = get_node("Charge").charge_time_reduction
+	for child in get_node("Shot").get_children():
+		if child is BossWeapon:
+			base_ammo_cost_multiplier = child.ammo_cost_multiplier
+			break
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -126,20 +133,17 @@ func process_flash(delta):
 		if flash_timer > 0.034:
 			end_flash()
 
-# Spec Head H: Weapon Cost -50%; -50% Charge Speed.
-func equip_hermes_head_parts():
-	get_node("Charge").charge_time_reduction += 0.5
-	var cannon = get_node("Shot")
-	for child in cannon.get_children():
-		if child is BossWeapon:
-			child.ammo_cost_multiplier /= 2
-	get_node("JumpDamage").deactivate()
-
 func set_boss_weapon_cost_multiplier(value: float) -> void:
 	var cannon = get_node("Shot")
 	for child in cannon.get_children():
 		if child is BossWeapon:
 			child.ammo_cost_multiplier = value
+			
+# Spec Head H: Weapon Cost -50%; -50% Charge Speed.
+func equip_hermes_head_parts():
+	get_node("Charge").charge_time_reduction = base_charge_time_reduction + 0.5
+	set_boss_weapon_cost_multiplier(base_ammo_cost_multiplier / 2)
+	get_node("JumpDamage").deactivate()
 
 # Spec Body H: +50% I-frame time; Immune damage <= 2; Red Life Steal.
 func equip_hermes_body_parts():
@@ -191,8 +195,8 @@ func equip_hermes_legs_parts():
 	airdash.horizontal_velocity *= 1.5
 
 func equip_icarus_head_parts():
-	get_node("Charge").charge_time_reduction = 0
-	set_boss_weapon_cost_multiplier(1.0)
+	get_node("Charge").charge_time_reduction = base_charge_time_reduction
+	set_boss_weapon_cost_multiplier(base_ammo_cost_multiplier)
 	get_node("JumpDamage").activate()
 
 func equip_icarus_body_parts():
@@ -309,7 +313,7 @@ func equip_weapon(collectible: String) -> void :
 	# Head H giam 50% ca normal + charged (qua ammo_cost_multiplier).
 	# Ap lai cho vu khi unlock sau khi da lay Head.
 	if "hermes_head" in current_armor:
-		set_boss_weapon_cost_multiplier(0.5)
+		set_boss_weapon_cost_multiplier(base_ammo_cost_multiplier / 2)
 	
 func get_current_weapon():
 	return get_node("Shot").current_weapon

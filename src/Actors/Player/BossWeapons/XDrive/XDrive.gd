@@ -119,17 +119,20 @@ func remove_xdrive_stats() -> void :
 		character.maximum_fall_velocity *= 0.5
 	if is_instance_valid(charge):
 		var armor = null
+		var base_charge = 0.0
 		if is_instance_valid(character):
 			armor = character.get("current_armor")
+			if character.get("base_charge_time_reduction") != null:
+				base_charge = character.get("base_charge_time_reduction")
 		if armor != null and "hermes_head" in armor:
-			charge.charge_time_reduction = 0.5
+			charge.charge_time_reduction = base_charge + 0.5
 		else:
-			charge.charge_time_reduction = 0.0
+			charge.charge_time_reduction = base_charge
 
 func apply_speed_multiplier(mult: float) -> void :
 	if not is_instance_valid(character):
 		return
-	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash", "WallJump", "DashWallJump"]:
+	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash", "WallJump", "DashWallJump", "Fall"]:
 		var node = character.get_node_or_null(node_name)
 		if node != null and node.get("horizontal_velocity") != null:
 			node.horizontal_velocity *= mult
