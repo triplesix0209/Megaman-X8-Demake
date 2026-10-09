@@ -24,6 +24,13 @@ var base_ammo_cost_multiplier: float = 1.0
 var base_damage_threshold: float = 0.0
 var base_invulnerability_time: float = 1.75
 var base_conflicting_moves: Array = ["Death", "WallSlide", "Ride"]
+var base_dash_duration: float = 0.55
+var base_airdash_duration: float = 0.475
+var base_walk_speed: float = 90.0
+var base_dash_speed: float = 210.0
+var base_airdash_speed: float = 210.0
+var base_max_air_jumps: int = 0
+var base_max_airdashes: int = 1
 
 signal walljump
 signal wallslide
@@ -118,6 +125,15 @@ func _ready() -> void :
 	base_damage_threshold = base_dmg.damage_threshold
 	base_invulnerability_time = base_dmg.invulnerability_time
 	base_conflicting_moves = base_dmg.conflicting_moves.duplicate()
+	var base_dash = get_node("Dash")
+	var base_airdash = get_node("AirDash")
+	base_dash_duration = base_dash.dash_duration
+	base_airdash_duration = base_airdash.dash_duration
+	base_walk_speed = get_node("Walk").horizontal_velocity
+	base_dash_speed = base_dash.horizontal_velocity
+	base_airdash_speed = base_airdash.horizontal_velocity
+	base_max_air_jumps = get_node("AirJump").max_air_jumps
+	base_max_airdashes = base_airdash.max_airdashes
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -157,7 +173,7 @@ func equip_hermes_body_parts():
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = base_damage_reduction
 	dmg.prevent_knockbacks = base_prevent_knockbacks
-	dmg.damage_threshold = max(dmg.damage_threshold, base_damage_threshold + 2)
+	dmg.damage_threshold = base_damage_threshold
 	dmg.invulnerability_time = base_invulnerability_time * 1.5
 	dmg.conflicting_moves = base_conflicting_moves.duplicate()
 	get_node("LifeSteal").activate()
@@ -181,25 +197,27 @@ func equip_hermes_arms_parts():
 	cannon.set_current_weapon(hermes_Buster)
 	altfire.switch_to_hermes()
 
-# Spec Leg H: +25% Dash duration; +50% Walk Speed & Dash velocity; Ghost Dash
+# Spec Leg H: +25% Dash duration; +50% Walk Speed & Dash velocity; Ghost Dash.
 func equip_hermes_legs_parts():
 	var dash = get_node("Dash")
-	var airdash = get_node("AirDash")
-	get_node("AirJump").set_max_air_jumps(0)
-	dash.dash_duration *= 1.25
-	airdash.dash_duration *= 1.25
+	dash.dash_duration = base_dash_duration * 1.25
+	dash.horizontal_velocity = base_dash_speed * 1.5
 	dash.upgraded = true
-	airdash.upgraded = true
-	airdash.max_airdashes = 1
-	airdash.airdash_count = 1
 	dash.invulnerability_duration = dash.dash_duration
-	airdash.invulnerability_duration = airdash.dash_duration
-	var dmg = get_node("Damage")
-	dmg.damage_threshold = max(dmg.damage_threshold, 3)
 
-	get_node("Walk").horizontal_velocity *= 1.5
-	dash.horizontal_velocity *= 1.5
-	airdash.horizontal_velocity *= 1.5
+	var walk = get_node("Walk")
+	walk.horizontal_velocity = base_walk_speed * 1.5
+
+	var airdash = get_node("AirDash")
+	airdash.dash_duration = base_airdash_duration * 1.25
+	airdash.horizontal_velocity = base_airdash_speed * 1.5
+	airdash.upgraded = true
+	airdash.max_airdashes = base_max_airdashes
+	airdash.airdash_count = base_max_airdashes
+	airdash.invulnerability_duration = airdash.dash_duration
+
+	var airjump = get_node("AirJump")
+	airjump.set_max_air_jumps(base_max_air_jumps)
 
 func equip_icarus_head_parts():
 	get_node("Charge").charge_time_reduction = base_charge_time_reduction
@@ -212,10 +230,7 @@ func equip_icarus_body_parts():
 	dmg.prevent_knockbacks = true
 	dmg.conflicting_moves = ["Death", "Nothing"]
 	dmg.invulnerability_time = base_invulnerability_time
-	if "hermes_legs" in current_armor:
-		dmg.damage_threshold = 3
-	else:
-		dmg.damage_threshold = 0
+	dmg.damage_threshold = base_damage_threshold
 	get_node("LifeSteal").deactivate()
 
 func equip_icarus_arms_parts():
@@ -238,7 +253,7 @@ func equip_icarus_legs_parts():
 	var airjump = get_node("AirJump")
 	var fall = get_node("Fall")
 	dash.upgraded = false
-	dash.dash_duration = 0.55
+	dash.dash_duration = base_dash_duration
 	dash.invulnerability_duration = 0
 	airdash.upgraded = false
 	airdash.max_airdashes = 2
@@ -255,7 +270,7 @@ func equip_icarus_legs_parts():
 	get_node("DashWallJump").jump_velocity = 420
 	airjump.jump_velocity = 140
 	
-	get_node("Walk").horizontal_velocity = 90
+	get_node("Walk").horizontal_velocity = base_walk_speed
 	get_node("Jump").horizontal_velocity = 90
 	get_node("Jump").dash_momentum = 210
 	get_node("DashJump").horizontal_velocity = 210
@@ -264,17 +279,17 @@ func equip_icarus_legs_parts():
 	airjump.horizontal_velocity = 90
 	airjump.normal_momentum = 90
 	airjump.dash_momentum = 210
-	dash.horizontal_velocity = 210
-	airdash.horizontal_velocity = 210
+	dash.horizontal_velocity = base_dash_speed
+	airdash.horizontal_velocity = base_airdash_speed
 	fall.horizontal_velocity = 90
 	fall.dash_momentum = 210
 	get_node("WallSlide").horizontal_speed = 90
 	maximum_fall_velocity = 375.0
 	var dmg = get_node("Damage")
 	if "hermes_body" in current_armor:
-		dmg.damage_threshold = 2
+		dmg.damage_threshold = base_damage_threshold + 2
 	else:
-		dmg.damage_threshold = 0
+		dmg.damage_threshold = base_damage_threshold
 	var c = animatedSprite.modulate
 	c.a = 1.0
 	animatedSprite.modulate = c
