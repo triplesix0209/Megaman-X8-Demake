@@ -21,6 +21,9 @@ var base_damage_reduction: float = 0.0
 var base_prevent_knockbacks: bool = false
 var base_charge_time_reduction: float = 0.0
 var base_ammo_cost_multiplier: float = 1.0
+var base_damage_threshold: float = 0.0
+var base_invulnerability_time: float = 1.75
+var base_conflicting_moves: Array = ["Death", "WallSlide", "Ride"]
 
 signal walljump
 signal wallslide
@@ -111,6 +114,10 @@ func _ready() -> void :
 		if child is BossWeapon:
 			base_ammo_cost_multiplier = child.ammo_cost_multiplier
 			break
+	var base_dmg = get_node("Damage")
+	base_damage_threshold = base_dmg.damage_threshold
+	base_invulnerability_time = base_dmg.invulnerability_time
+	base_conflicting_moves = base_dmg.conflicting_moves.duplicate()
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -150,9 +157,9 @@ func equip_hermes_body_parts():
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = base_damage_reduction
 	dmg.prevent_knockbacks = base_prevent_knockbacks
-	dmg.damage_threshold = max(dmg.damage_threshold, 2)
-	dmg.invulnerability_time *= 1.5
-	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
+	dmg.damage_threshold = max(dmg.damage_threshold, base_damage_threshold + 2)
+	dmg.invulnerability_time = base_invulnerability_time * 1.5
+	dmg.conflicting_moves = base_conflicting_moves.duplicate()
 	get_node("LifeSteal").activate()
 
 # Spec Buster H: Chargeable weapon; 5 Lemon Shots; Triad Shots (lv3).
@@ -204,7 +211,7 @@ func equip_icarus_body_parts():
 	dmg.damage_reduction = 50
 	dmg.prevent_knockbacks = true
 	dmg.conflicting_moves = ["Death", "Nothing"]
-	dmg.invulnerability_time = 1.75
+	dmg.invulnerability_time = base_invulnerability_time
 	if "hermes_legs" in current_armor:
 		dmg.damage_threshold = 3
 	else:
