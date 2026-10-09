@@ -181,23 +181,32 @@ func set_boss_weapon_cost_multiplier(value: float) -> void:
 		if child is BossWeapon:
 			child.ammo_cost_multiplier = value
 			
-# Spec Head H: Weapon Cost -50%; -50% Charge Speed.
+# Spec Head H:
+# Weapon Cost -50%
+# -50% Charge Speed
 func equip_hermes_head_parts():
 	get_node("Charge").charge_time_reduction = base_charge_time_reduction + 0.5
 	set_boss_weapon_cost_multiplier(base_ammo_cost_multiplier / 2)
 	get_node("JumpDamage").deactivate()
 
-# Spec Body H: +50% I-frame time; Immune damage <= 2; Red Life Steal.
+# Spec Body H:
+# Red Life Steal
+# +50% I-frame time;
+# Immune damage <= 2;
 func equip_hermes_body_parts():
+	get_node("LifeSteal").activate()
+	
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = base_damage_reduction
 	dmg.prevent_knockbacks = base_prevent_knockbacks
 	dmg.damage_threshold = base_damage_threshold
 	dmg.invulnerability_time = base_invulnerability_time * 1.5
 	dmg.conflicting_moves = base_conflicting_moves.duplicate()
-	get_node("LifeSteal").activate()
 
-# Spec Buster H: Chargeable weapon; 5 Lemon Shots; Triad Shots (lv3).
+# Spec Buster H:
+# Chargeable weapon
+# 5 Lemon Shots
+# Triad Shots (lv3).
 func equip_hermes_arms_parts():
 	var cannon = get_node("Shot")
 	var altfire = get_node("AltFire")
@@ -216,7 +225,10 @@ func equip_hermes_arms_parts():
 	cannon.set_current_weapon(hermes_Buster)
 	altfire.switch_to_hermes()
 
-# Spec Leg H: +25% Dash duration; +50% Walk Speed & Dash velocity; Ghost Dash.
+# Spec Leg H:
+# +25% Dash duration
+# +50% Walk & Dash velocity
+# Ghost Dash.
 func equip_hermes_legs_parts():
 	var dash = get_node("Dash")
 	dash.dash_duration = base_dash_duration * 1.25
