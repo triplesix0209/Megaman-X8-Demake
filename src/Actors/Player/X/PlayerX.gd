@@ -158,7 +158,7 @@ func equip_hermes_arms_parts():
 
 	var hermes_Buster = cannon.get_node("Hermes Buster")
 	hermes_Buster.active = true
-	hermes_Buster.max_shots_alive += 2
+	hermes_Buster.max_shots_alive = 5
 
 	var icarus_Buster = cannon.get_node("Icarus Buster")
 	icarus_Buster.active = false
