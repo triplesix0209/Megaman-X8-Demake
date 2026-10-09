@@ -31,6 +31,14 @@ var base_dash_speed: float = 210.0
 var base_airdash_speed: float = 210.0
 var base_max_air_jumps: int = 0
 var base_max_airdashes: int = 1
+var base_jump_max_time: float = 0.625
+var base_jump_velocity: float = 320.0
+var base_airjump_velocity: float = 320.0
+var base_fall_speed: float = 90.0
+var base_fall_dash_momentum: float = 210.0
+var base_fall_normal_momentum: float = 90.0
+var base_wallslide_speed: float = 90.0
+var base_max_fall_velocity: float = 375.0
 
 signal walljump
 signal wallslide
@@ -134,6 +142,17 @@ func _ready() -> void :
 	base_airdash_speed = base_airdash.horizontal_velocity
 	base_max_air_jumps = get_node("AirJump").max_air_jumps
 	base_max_airdashes = base_airdash.max_airdashes
+	var base_jump = get_node("Jump")
+	base_jump_max_time = base_jump.max_jump_time
+	base_jump_velocity = base_jump.jump_velocity
+	var base_airjump = get_node("AirJump")
+	base_airjump_velocity = base_airjump.jump_velocity
+	var base_fall = get_node("Fall")
+	base_fall_speed = base_fall.horizontal_velocity
+	base_fall_dash_momentum = base_fall.dash_momentum
+	base_fall_normal_momentum = base_fall.normal_momentum
+	base_wallslide_speed = get_node("WallSlide").horizontal_speed
+	base_max_fall_velocity = maximum_fall_velocity
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -216,6 +235,18 @@ func equip_hermes_legs_parts():
 
 	var airjump = get_node("AirJump")
 	airjump.set_max_air_jumps(base_max_air_jumps)
+	airjump.jump_velocity = base_airjump_velocity
+
+	for jump_node in ["Jump", "DashJump", "WallJump", "DashWallJump"]:
+		get_node(jump_node).max_jump_time = base_jump_max_time
+		get_node(jump_node).jump_velocity = base_jump_velocity
+
+	var fall = get_node("Fall")
+	fall.horizontal_velocity = base_fall_speed
+	fall.dash_momentum = base_fall_dash_momentum
+	fall.normal_momentum = base_fall_normal_momentum
+	get_node("WallSlide").horizontal_speed = base_wallslide_speed
+	maximum_fall_velocity = base_max_fall_velocity
 
 func equip_icarus_head_parts():
 	get_node("Charge").charge_time_reduction = base_charge_time_reduction
