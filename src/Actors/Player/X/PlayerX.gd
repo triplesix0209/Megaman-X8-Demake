@@ -166,13 +166,13 @@ func equip_hermes_arms_parts():
 	
 
 func equip_hermes_legs_parts():
-	# Spec Leg H: dash x1.25 (ground 0.55, air 0.475), speed x1.5
-	# Ghost dash: invuln suot dash (xuyen dan) + mien nhiem damage <= 3.
+	# Spec Leg H: speed chi x1.5 Walk + van toc Dash (ground + air).
+	# Dash duration x1.25 + ghost dash + threshold 3 giu nguyen.
 	var dash = get_node("Dash")
 	var airdash = get_node("AirDash")
 	get_node("AirJump").set_max_air_jumps(0)
-	dash.dash_duration = 0.55 * 1.25
-	airdash.dash_duration = 0.475 * 1.25
+	dash.dash_duration *= 1.25
+	airdash.dash_duration *= 1.25
 	dash.upgraded = true
 	airdash.upgraded = true
 	airdash.max_airdashes = 1
@@ -182,16 +182,9 @@ func equip_hermes_legs_parts():
 	var dmg = get_node("Damage")
 	dmg.damage_threshold = max(dmg.damage_threshold, 3)
 
-	get_node("Walk").horizontal_velocity = 90.0 * 1.5
-	get_node("Jump").horizontal_velocity = 90.0 * 1.5
-	get_node("DashJump").horizontal_velocity = 210.0 * 1.5
-	get_node("WallJump").horizontal_velocity = 90.0 * 1.5
-	get_node("DashWallJump").horizontal_velocity = 210.0 * 1.5
-	dash.horizontal_velocity = 210.0 * 1.5
-	airdash.horizontal_velocity = 210.0 * 1.5
-	get_node("Fall").horizontal_velocity = 90.0 * 1.5
-	get_node("WallSlide").horizontal_speed = 90.0 * 1.5
-	maximum_fall_velocity = 375.0 * 1.5
+	get_node("Walk").horizontal_velocity *= 1.5
+	dash.horizontal_velocity *= 1.5
+	airdash.horizontal_velocity *= 1.5
 
 func equip_icarus_head_parts():
 	get_node("Charge").charge_time_reduction = 0
