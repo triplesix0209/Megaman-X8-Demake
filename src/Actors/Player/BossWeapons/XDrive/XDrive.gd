@@ -91,17 +91,19 @@ func apply_buff() -> void :
 		emit_signal("activated")
 		Event.emit_signal("xdrive")
 
+# Spec X-Drive:
+# - Recover Red Health.
+# - -75% Charge Speed.
+# - Damage Immune
+# - +100% Walk Speed & Dash velocity.
+# - Triad 5 Shots.
 func apply_xdrive_stats() -> void :
-	# Spec X-Drive: x4 Charge (0.75, gap doi Head H 0.5) + x2 speed
-	# (Walk/Jump/Dash/DashJump/AirDash/WallJump/DashWallJump/Fall/WallSlide).
-	# x2 toc do roi doc qua maximum_fall_velocity. Mien nhiem + hoi Red Health
-	# xu ly o apply_buff() (add_invulnerability) + Event xdrive -> LifeSteal.
-	# Triad 5 thay vi 3 xu ly o TripleBuster.create_five_way_shots().
+	var base_charge: float = 0.0
+	if is_instance_valid(character) and character.get("base_charge_time_reduction") != null:
+		base_charge = character.get("base_charge_time_reduction")
 	if is_instance_valid(charge):
-		charge.charge_time_reduction = 0.75
+		charge.charge_time_reduction = base_charge + 0.75
 	apply_speed_multiplier(2.0)
-	if is_instance_valid(character) and character.get("maximum_fall_velocity") != null:
-		character.maximum_fall_velocity *= 2.0
 
 func remove_buff() -> void :
 	if buffed:
@@ -115,8 +117,6 @@ func remove_buff() -> void :
 
 func remove_xdrive_stats() -> void :
 	apply_speed_multiplier(0.5)
-	if is_instance_valid(character) and character.get("maximum_fall_velocity") != null:
-		character.maximum_fall_velocity *= 0.5
 	if is_instance_valid(charge):
 		var armor = null
 		var base_charge = 0.0
@@ -132,14 +132,10 @@ func remove_xdrive_stats() -> void :
 func apply_speed_multiplier(mult: float) -> void :
 	if not is_instance_valid(character):
 		return
-	for node_name in ["Walk", "Jump", "Dash", "DashJump", "AirDash", "WallJump", "DashWallJump", "Fall"]:
+	for node_name in ["Walk", "Dash", "AirDash"]:
 		var node = character.get_node_or_null(node_name)
 		if node != null and node.get("horizontal_velocity") != null:
 			node.horizontal_velocity *= mult
-	# WallSlide dung bien rieng horizontal_speed (khong phai horizontal_velocity).
-	var slide = character.get_node_or_null("WallSlide")
-	if slide != null and slide.get("horizontal_speed") != null:
-		slide.horizontal_speed *= mult
 
 func _physics_process(delta: float) -> void :
 	timer += delta
