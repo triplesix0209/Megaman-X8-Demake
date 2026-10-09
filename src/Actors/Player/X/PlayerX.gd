@@ -199,7 +199,7 @@ func equip_hermes_body_parts():
 	var dmg = get_node("Damage")
 	dmg.damage_reduction = base_damage_reduction
 	dmg.prevent_knockbacks = base_prevent_knockbacks
-	dmg.damage_threshold = base_damage_threshold
+	dmg.damage_threshold = max(dmg.damage_threshold, base_damage_threshold + 2)
 	dmg.invulnerability_time = base_invulnerability_time * 1.5
 	dmg.conflicting_moves = base_conflicting_moves.duplicate()
 
