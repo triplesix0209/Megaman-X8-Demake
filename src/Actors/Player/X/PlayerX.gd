@@ -17,6 +17,7 @@ var using_upgrades: bool = false
 var grabbed: bool = false
 var ride_eject_delay: float = 0.0
 var ride: Node2D
+var base_damage_reduction: float = 0.0
 
 signal walljump
 signal wallslide
@@ -100,6 +101,7 @@ func _ready() -> void :
 	Event.listen("collected", self, "collect")
 	listen("land", self, "on_land")
 	save_original_colors()
+	base_damage_reduction = get_node("Damage").damage_reduction
 	armor_sprites = get_armor_sprites()
 	GameManager.set_player(self)
 	Event.call_deferred("emit_signal", "player_set")
@@ -122,10 +124,13 @@ func process_flash(delta):
 		if flash_timer > 0.034:
 			end_flash()
 
+# Spec Head H: Weapon Cost -50%; -50% Charge Speed.
 func equip_hermes_head_parts():
-	# Spec Head H: x2 Charge Speed (time * 0.5) + Boss Weapon -50% (normal + charged).
-	get_node("Charge").charge_time_reduction = 0.5
-	set_boss_weapon_cost_multiplier(0.5)
+	get_node("Charge").charge_time_reduction += 0.5
+	var cannon = get_node("Shot")
+	for child in cannon.get_children():
+		if child is BossWeapon:
+			child.ammo_cost_multiplier /= 2
 	get_node("JumpDamage").deactivate()
 
 func set_boss_weapon_cost_multiplier(value: float) -> void:
@@ -134,14 +139,13 @@ func set_boss_weapon_cost_multiplier(value: float) -> void:
 		if child is BossWeapon:
 			child.ammo_cost_multiplier = value
 
+# Spec Body H: +50% I-frame time, Immune damage <= 2, Red Life Steal.
 func equip_hermes_body_parts():
-	# Spec Body H: x1.5 I-Frame (1.75 * 1.5), mien nhiem damage <= 2, Red Hit Life Steal.
-	# Bo effect cu: khong giam % damage (damage_reduction = 0), chi dung threshold + iframes.
 	var dmg = get_node("Damage")
-	dmg.damage_reduction = 0
+	dmg.damage_reduction = base_damage_reduction
 	dmg.prevent_knockbacks = false
 	dmg.damage_threshold = max(dmg.damage_threshold, 2)
-	dmg.invulnerability_time = 1.75 * 1.5
+	dmg.invulnerability_time *= 1.5
 	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
 	get_node("LifeSteal").activate()
 
