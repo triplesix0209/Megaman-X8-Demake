@@ -151,27 +151,27 @@ func equip_hermes_body_parts():
 	dmg.conflicting_moves = ["Death", "WallSlide", "Ride"]
 	get_node("LifeSteal").activate()
 
-# Spec Buster H: Chargeable weapon (upgraded); +2 Lemon Shots; Triad Shots (lv3).
+# Spec Buster H: Chargeable weapon; 5 Lemon Shots; Triad Shots (lv3).
 func equip_hermes_arms_parts():
-	var cannon = get_node("Shot")
-	var hermes_Buster = cannon.get_node("Hermes Buster")
-	var icarus_Buster = cannon.get_node("Icarus Buster")
 	var altfire = get_node("AltFire")
-
+	
+	var hermes_Buster = cannon.get_node("Hermes Buster")
 	hermes_Buster.active = true
-	hermes_Buster.max_shots_alive += 2
+	hermes_Buster.max_shots_alive = 5
+	
+	var icarus_Buster = cannon.get_node("Icarus Buster")
 	icarus_Buster.active = false
+
+	altfire.switch_to_hermes()
+	var cannon = get_node("Shot")
+	cannon.set_current_weapon(hermes_Buster)
 	cannon.upgraded = true
 	cannon.infinite_charged_ammo = false
 	cannon.infinite_regular_ammo = false
 	cannon.update_list_of_weapons()
-	cannon.set_current_weapon(hermes_Buster)
-	altfire.switch_to_hermes()
-	
 
+# Spec Leg H: +25% Dash duration; +50% Walk Speed & Dash velocity; Ghost Dash
 func equip_hermes_legs_parts():
-	# Spec Leg H: speed chi x1.5 Walk + van toc Dash (ground + air).
-	# Dash duration x1.25 + ghost dash + threshold 3 giu nguyen.
 	var dash = get_node("Dash")
 	var airdash = get_node("AirDash")
 	get_node("AirJump").set_max_air_jumps(0)
